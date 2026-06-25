@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ profile_user.username }}{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="card p-8">
+        <div class="flex items-start gap-5">
+            {% if profile.avatar %}
+                <img src="{{ profile.avatar.url }}" alt="{{ profile_user.username }}'s avatar"
+                     class="w-20 h-20 rounded-full object-cover border border-earth-100">
+            {% else %}
+                <div class="w-20 h-20 rounded-full bg-earth-100 flex items-center justify-center
+                            font-display text-2xl text-earth-700">
+                    {{ profile_user.username|slice:":1"|upper }}
+                </div>
+            {% endif %}
+
+            <div class="flex-1">
+                <div class="flex items-center gap-2">
+                    <h1 class="text-2xl">{{ profile_user.username }}</h1>
+                    {% include 'components/griot_badge.html' with profile=profile %}
+                </div>
+                {% if profile.location %}
+                    <p class="text-sm text-earth-400 mt-1">{{ profile.location }}</p>
+                {% endif %}
+                <p class="text-sm text-earth-400 mt-1">
+                    Reputation: <span class="font-medium text-earth-700">{{ profile.reputation_score }}</span>
+                </p>
+            </div>
+
+            {% if is_own_profile %}
+                <a href="{% url 'users:profile_edit' %}" class="btn-secondary">Edit profile</a>
+            {% endif %}
+        </div>
+
+        {% if profile.bio %}
+            <p class="mt-6 text-earth-700 leading-relaxed">{{ profile.bio }}</p>
+        {% elif is_own_profile %}
+            <p class="mt-6 text-earth-400 italic">
+                You haven't written a bio yet.
+                <a href="{% url 'users:profile_edit' %}" class="text-terracotta hover:underline">Add one</a>.
+            </p>
+        {% endif %}
+    </div>
+
+    <!-- This user's posts and verified Archive links will render here from Phase 2 onward. -->
+</div>
+{% endblock %}

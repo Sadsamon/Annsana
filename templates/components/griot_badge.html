@@ -1,0 +1,9 @@
+{% comment %}
+Usage: {% include 'components/griot_badge.html' with profile=some_profile %}
+{% endcomment %}
+{% if profile.is_griot %}
+    <span class="inline-flex items-center gap-1 rounded-full bg-sage-light/30 px-2.5 py-0.5
+                 text-xs font-medium text-sage">
+        ● Griot
+    </span>
+{% endif %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Log in{% endblock %}
+
+{% block content %}
+<div class="max-w-sm mx-auto">
+    <h1 class="text-2xl mb-2">Welcome back</h1>
+    <p class="text-earth-400 text-sm mb-6">Log in to continue your journey through Annsana.</p>
+
+    <div class="card p-6">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn-primary w-full mt-4">Log in</button>
+        </form>
+    </div>
+
+    <p class="text-sm text-earth-400 mt-4 text-center">
+        New here?
+        <a href="{% url 'users:register' %}" class="text-terracotta font-medium hover:underline">
+            Create an account
+        </a>
+    </p>
+</div>
+{% endblock %}
