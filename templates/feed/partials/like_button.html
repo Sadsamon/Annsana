@@ -1,0 +1,6 @@
+{% load feed_extras %}
+<button hx-post="{% url 'feed:like' post.pk %}"
+        hx-swap="outerHTML"
+        class="{% if post|is_liked_by:request.user %}text-terracotta-700{% else %}text-neutral-600{% endif %}">
+    ♥ {{ post.like_count }}
+</button>

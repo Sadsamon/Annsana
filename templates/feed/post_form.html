@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}New post · Annsana{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto">
+    <h1 class="mb-4 font-display text-2xl text-indigo-700">New post</h1>
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="rounded-md bg-terracotta-500 px-4 py-2 text-sm text-white">
+            Share
+        </button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+<div id="comments-wrapper">
+    <div class="mb-3 space-y-2">
+        {% for comment in comments %}
+            <p class="text-sm">
+                <span class="font-medium text-indigo-700">{{ comment.author.public_name }}</span>
+                {{ comment.body }}
+            </p>
+        {% endfor %}
+    </div>
+
+    {% if user.is_authenticated %}
+        <form hx-post="{% url 'feed:comment' post.pk %}"
+              hx-target="#comments-wrapper"
+              hx-swap="outerHTML"
+              class="flex gap-2">
+            {% csrf_token %}
+            {{ comment_form.body }}
+            <button type="submit" class="rounded-md bg-indigo-700 px-3 py-1 text-sm text-white">
+                Post
+            </button>
+        </form>
+    {% endif %}
+</div>

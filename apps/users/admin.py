@@ -1,15 +1,26 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 
-from .models import UserProfile
+from .models import User
 
 
-@admin.register(UserProfile)
-class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'is_griot', 'reputation_score', 'location', 'created_at')
-    list_filter = ('is_griot',)
-    search_fields = ('user__username', 'user__email', 'location')
-    readonly_fields = ('created_at',)
-
-    # Griot promotion is intentionally manual at MVP (TSD Section 12 / 16
-    # Architect's Note): this is the one and only place that flag gets flipped.
-    fields = ('user', 'is_griot', 'reputation_score', 'bio', 'avatar', 'location', 'created_at')
+@admin.register(User)
+class UserAdmin(DjangoUserAdmin):
+    fieldsets = DjangoUserAdmin.fieldsets + (
+        (
+            "Annsana profile",
+            {
+                "fields": (
+                    "display_name",
+                    "bio",
+                    "avatar",
+                    "location",
+                    "cultural_affiliation",
+                    "is_contributor",
+                )
+            },
+        ),
+    )
+    list_display = ("username", "email", "display_name", "is_contributor", "is_staff")
+    list_filter = DjangoUserAdmin.list_filter + ("is_contributor",)
+    search_fields = ("username", "email", "display_name")

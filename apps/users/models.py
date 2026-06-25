@@ -1,77 +1,56 @@
-from django.conf import settings
+import uuid
+
+from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils.translation import gettext_lazy as _
+
+from .managers import UserManager
 
 
-def avatar_upload_path(instance, filename):
-    """media/avatars/<user_id>/<filename>"""
-    return f'avatars/{instance.user_id}/{filename}'
-
-
-class UserProfile(models.Model):
+class User(AbstractUser):
     """
-    One-to-one extension of Django's built-in User model.
+    Custom user model for Annsana.
 
-    Schema mirrors TSD Section 5.1 (users_userprofile) exactly. Do not add
-    fields here without updating the TSD first — this table is the anchor
-    for the Griot role system and the Trust Layer's reputation scoring.
+    Extends Django's AbstractUser with profile fields relevant to a
+    platform that blends social expression with archival cultural research.
     """
 
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='profile',
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    display_name = models.CharField(_("display name"), max_length=80, blank=True)
+    bio = models.TextField(_("bio"), max_length=500, blank=True)
+    avatar = models.ImageField(
+        _("avatar"), upload_to="avatars/%Y/%m/", blank=True, null=True
     )
-    bio = models.TextField(null=True, blank=True)
-    avatar = models.ImageField(upload_to=avatar_upload_path, null=True, blank=True)
-    is_griot = models.BooleanField(
+    location = models.CharField(_("location"), max_length=120, blank=True)
+    cultural_affiliation = models.CharField(
+        _("cultural affiliation"),
+        max_length=120,
+        blank=True,
+        help_text=_(
+            "Heritage, community, or region the user wishes to highlight on their profile."
+        ),
+    )
+    is_contributor = models.BooleanField(
+        _("contributor status"),
         default=False,
-        help_text='Vetted expert/enthusiast. Promoted manually via the admin at MVP.',
+        help_text=_(
+            "Whether this user has been granted archival contributor permissions."
+        ),
     )
-    reputation_score = models.IntegerField(default=0)
-    location = models.CharField(max_length=100, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(_("created at"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("updated at"), auto_now=True)
+
+    objects = UserManager()
 
     class Meta:
-        verbose_name = 'User Profile'
-        verbose_name_plural = 'User Profiles'
+        verbose_name = _("user")
+        verbose_name_plural = _("users")
+        ordering = ["-created_at"]
 
     def __str__(self):
-        return f'{self.user.username} ({"Griot" if self.is_griot else "Member"})'
+        return self.display_name or self.username
 
-    def recalculate_reputation(self):
-        """
-        Explicit, testable reputation calculation (TSD Section 12).
-
-        Deliberately decoupled from a Django signal receiver — this method
-        is what the signal calls, and it can also be invoked manually from
-        the Django shell or admin when diagnosing a reputation discrepancy.
-
-        The `trust` app (Vote model) doesn't exist until Phase 5, so this
-        is a safe no-op until then: it looks the model up by name rather
-        than importing it directly, which means nothing here needs to
-        change when Phase 5 lands.
-        """
-        from django.apps import apps
-
-        try:
-            Vote = apps.get_model('trust', 'Vote')
-        except LookupError:
-            # Trust app not installed yet (pre-Phase 5). Nothing to do.
-            return
-
-        upvotes = Vote.objects.filter(
-            target_entry__author=self.user, vote_type='up'
-        ).count()
-        downvotes = Vote.objects.filter(
-            target_entry__author=self.user, vote_type='down'
-        ).count()
-
-        link_upvotes = Vote.objects.filter(
-            target_link__suggested_by=self.user, vote_type='up'
-        ).count()
-        link_downvotes = Vote.objects.filter(
-            target_link__suggested_by=self.user, vote_type='down'
-        ).count()
-
-        self.reputation_score = (upvotes - downvotes) + (link_upvotes - link_downvotes)
-        self.save(update_fields=['reputation_score'])
+    @property
+    def public_name(self):
+        return self.display_name or self.username

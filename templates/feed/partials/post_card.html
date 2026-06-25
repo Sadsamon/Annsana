@@ -1,0 +1,31 @@
+{% load feed_extras %}
+<article class="mb-8 rounded-lg border border-neutral-300 bg-neutral-50 p-4">
+    <header class="mb-3 flex items-center justify-between">
+        <a href="{% url 'users:profile' post.author.username %}"
+           class="font-medium text-indigo-700">
+            {{ post.author.public_name }}
+        </a>
+        {% if post.location %}
+            <span class="text-xs text-neutral-600">{{ post.location }}</span>
+        {% endif %}
+    </header>
+
+    {% with first_image=post.images.first %}
+        {% if first_image %}
+            <img src="{{ first_image.image.url }}"
+                 alt="{{ first_image.alt_text }}"
+                 class="mb-3 w-full rounded-md object-cover">
+        {% endif %}
+    {% endwith %}
+
+    {% if post.caption %}
+        <p class="mb-3 text-sm text-neutral-900">{{ post.caption }}</p>
+    {% endif %}
+
+    <div class="flex items-center gap-4 text-sm text-neutral-600">
+        {% include "feed/partials/like_button.html" %}
+        <a href="{% url 'feed:detail' post.pk %}">
+            {{ post.comment_count }} comment{{ post.comment_count|pluralize }}
+        </a>
+    </div>
+</article>

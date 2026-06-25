@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Post by {{ post.author.public_name }} · Annsana{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto">
+    {% include "feed/partials/post_card.html" %}
+
+    <section class="mt-6">
+        <h2 class="mb-2 font-display text-lg text-indigo-700">Comments</h2>
+        {% include "feed/partials/comment_list.html" %}
+    </section>
+</div>
+{% endblock %}
