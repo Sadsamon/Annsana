@@ -18,7 +18,7 @@ tailwind.config.js  Tailwind theme wired to the design tokens
 templates/          Base template + app templates
 ```
 
-## Phase 2 — feed app
+## Phase 2 — feed app (rework in process to improve functionality)
 
 - `Post` (caption, location, author) with a separate `PostImage` table so
   multi-image carousels don't require a later schema change.
