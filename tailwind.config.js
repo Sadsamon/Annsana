@@ -1,46 +1,21 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./templates/**/*.html",
-    "./apps/**/templates/**/*.html",
-    "./static/js/**/*.js",
+    './templates/**/*.html',
+    './apps/**/templates/**/*.html',
   ],
   theme: {
     extend: {
       colors: {
-        terracotta: {
-          50: "var(--color-terracotta-50)",
-          100: "var(--color-terracotta-100)",
-          500: "var(--color-terracotta-500)",
-          700: "var(--color-terracotta-700)",
-        },
-        indigo: {
-          50: "var(--color-indigo-50)",
-          100: "var(--color-indigo-100)",
-          500: "var(--color-indigo-500)",
-          700: "var(--color-indigo-700)",
-        },
-        gold: {
-          50: "var(--color-gold-50)",
-          100: "var(--color-gold-100)",
-          500: "var(--color-gold-500)",
-          700: "var(--color-gold-700)",
-        },
-        savanna: {
-          50: "var(--color-savanna-50)",
-          100: "var(--color-savanna-100)",
-          500: "var(--color-savanna-500)",
-          700: "var(--color-savanna-700)",
-        },
+        'earth':      { 900: '#2C1810', 700: '#5C3D2E', 400: '#A0785A', 100: '#F5EDE4' },
+        'terracotta': { DEFAULT: '#C0693B', light: '#D4845E' },
+        'sage':       { DEFAULT: '#6B7C5E', light: '#8A9E7A' },
+        'parchment':  { DEFAULT: '#F8F2E8', dark: '#EDE4D3' },
+        'ink':        { DEFAULT: '#1A1A2E', soft: '#4A4A6A' },
       },
       fontFamily: {
-        display: ["var(--font-display)"],
-        body: ["var(--font-body)"],
-      },
-      borderRadius: {
-        sm: "var(--radius-sm)",
-        md: "var(--radius-md)",
-        lg: "var(--radius-lg)",
+        'display': ['"Playfair Display"', 'serif'],  // Headings, archive titles
+        'body':    ['"Inter"', 'sans-serif'],         // UI, captions
       },
     },
   },
