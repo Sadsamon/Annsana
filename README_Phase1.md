@@ -1,73 +1,57 @@
-# Annsana — Phase 1: Foundation
+# Annsana — Phase 1 Scaffold
 
-This is the Phase 1 scaffold described in the Annsana TSD (Section 16):
-Django project setup, environment-split settings, PostgreSQL config,
-the `users` app (registration, login/logout, profiles, Griot flag),
-and base templates wired to the Tailwind design system.
+Django project scaffold for Annsana: a platform bridging social expression
+(Instagram-style feed) with archival research (wiki-style knowledge base)
+around African cultural heritage.
+
+## Stack
+Django · PostgreSQL · HTMX · Tailwind CSS
+
+## Structure
+
+```
+config/             Project config (split settings, root urls, wsgi/asgi)
+apps/users/         Custom user model and profile views
+apps/feed/          Posts, multi-image carousels, likes, comments (HTMX)
+static/css/tokens.css   Design tokens (color, type, spacing, radii)
+tailwind.config.js  Tailwind theme wired to the design tokens
+templates/          Base template + app templates
+```
+
+## Phase 2 — feed app (rework in process to improve functionality)
+
+- `Post` (caption, location, author) with a separate `PostImage` table so
+  multi-image carousels don't require a later schema change.
+- `Like` (unique per user/post) and `Comment`, both with HTMX-driven
+  partial updates — no full page reload on like or comment.
+- `FeedListView` paginates and serves an HTMX partial for infinite scroll
+  (`hx-trigger="revealed"` on a sentinel div).
+
+Run the test suite without a live Postgres connection:
+
+```bash
+DJANGO_SETTINGS_MODULE=config.settings.testing python manage.py test
+```
 
 ## Setup
 
 ```bash
-# 1. Create and activate a virtual environment
-python3 -m venv venv
-source venv/bin/activate   # Windows: venv\Scripts\activate
-
-# 2. Install Python dependencies
+python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-
-# 3. Configure environment
-cp .env.example .env
-# edit .env: set SECRET_KEY, DATABASE_URL, etc.
-
-# 4. Install frontend tooling and build Tailwind CSS
-npm install
-npm run build:css
-# during development, use the watcher instead:
-# npm run watch:css
-
-# 5. Create the Postgres database (adjust to your local setup)
-createdb annsana
-
-# 6. Run migrations
-python manage.py makemigrations
+cp .env.example .env          # then edit SECRET_KEY / DATABASE_URL
 python manage.py migrate
-
-# 7. Create a superuser (this is also how you promote a user to Griot later)
 python manage.py createsuperuser
-
-# 8. Run the dev server
 python manage.py runserver
 ```
 
-Visit `http://127.0.0.1:8000/register/` to create an account, or
-`/admin/` to log in as your superuser and flip `is_griot = True` on a
-`UserProfile`.
+Settings default to `config.settings.development`. For production, set
+`DJANGO_SETTINGS_MODULE=config.settings.production` and provide a real
+`SECRET_KEY`, `DATABASE_URL`, and `ALLOWED_HOSTS` via environment variables.
 
-## What's in this phase
+## Tailwind
 
-- `annsana/settings/` — split into `base.py`, `development.py`, `production.py`
-- `apps/users/` — `UserProfile` model, registration/login/logout views,
-  profile view + edit view, admin registration, auto-profile-creation signal
-- `templates/base.html` — global nav, flash messages, Tailwind design tokens
-- `tailwind.config.js` / `static/css/input.css` — design system from TSD §9.1
-
-## What's deliberately deferred
-
-Per the TSD's phased plan and the architect's notes already on file:
-
-- Image resize/WebP pipeline is **not yet wired to `Post.save()`** because
-  `Post` doesn't exist until Phase 2. `UserProfile.avatar` is stored as-is
-  for now; revisit with `django-imagekit` if upload volume grows.
-- `UserProfile.recalculate_reputation()` is implemented but is a safe no-op
-  until the `trust` app (Phase 5) exists — it looks up the `Vote` model by
-  name via `apps.get_model()` rather than importing it directly, so no
-  changes will be needed here when Phase 5 lands.
-- Griot promotion is manual-only via `/admin/`, as decided.
-- `feed`, `archive`, `linking`, `trust` apps are not yet created — their
-  `INSTALLED_APPS` entries and `urls.py` includes are left as commented
-  placeholders so the wiring is obvious when each phase begins.
-
-## Next step
-
-Phase 2 — the `feed` app: `Post` model, image upload pipeline, feed home
-view, and HTMX infinite scroll.
+This scaffold assumes the Tailwind CLI or `django-tailwind` will compile
+`tailwind.config.js` into `static/css/main.css`. Design tokens live in
+`static/css/tokens.css` as CSS custom properties and are referenced from
+`tailwind.config.js` rather than hardcoded, so a future re-theme only
+touches one file.
