@@ -9,24 +9,37 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.11]
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: annsana_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.11'
       - name: Install dependencies
         run: |
-          python -m venv .venv
-          source .venv/bin/activate
-          pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Run tests
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-django
+      - name: Run migrations
         env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/annsana_test
           DJANGO_SETTINGS_MODULE: config.settings.testing
         run: |
-          source .venv/bin/activate
-          python -m pytest -q || python -m pytest -q
+          python manage.py migrate
+      - name: Run tests
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/annsana_test
+          DJANGO_SETTINGS_MODULE: config.settings.testing
+        run: |
+          pytest -q
