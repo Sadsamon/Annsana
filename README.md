@@ -1,43 +1,45 @@
-# Annsana — Phase 1 Scaffold
+<div align="center">
 
-Django project scaffold for Annsana: a platform bridging social expression
-(Instagram-style feed) with archival research (wiki-style knowledge base)
-around African cultural heritage.
+# Annsana
 
-## Stack
-Django · PostgreSQL · HTMX · Tailwind CSS
+**A community-focused platform bridging social expression with an archival research knowledge base focused on African cultural heritage.**
 
-## Structure
+A Django scaffold: feed (Instagram-style) + wiki/archive (knowledge base) — Phase 1 scaffold and developer-facing docs.
 
-```
-config/             Project config (split settings, root urls, wsgi/asgi)
-apps/users/         Custom user model and profile views
-apps/feed/          Posts, multi-image carousels, likes, comments (HTMX)
-static/css/tokens.css   Design tokens (color, type, spacing, radii)
-tailwind.config.js  Tailwind theme wired to the design tokens
-templates/          Base template + app templates
-```
+<img src="docs/tutorial.svg" width="620" alt="Annsana tutorial placeholder" />
 
-## Phase 2 — feed app (rework in process to improve functionality)
+</div>
 
-- `Post` (caption, location, author) with a separate `PostImage` table so
-  multi-image carousels don't require a later schema change.
-- `Like` (unique per user/post) and `Comment`, both with HTMX-driven
-  partial updates — no full page reload on like or comment.
-- `FeedListView` paginates and serves an HTMX partial for infinite scroll
-  (`hx-trigger="revealed"` on a sentinel div).
-- Known gap: there's no login/signup view yet — `LoginRequiredMixin` and
-  `@login_required` will redirect to Django's default `/accounts/login/`,
-  which doesn't have a template yet. That's a reasonable candidate for the
-  next phase alongside the wiki/archive app.
+---
 
-Run the test suite without a live Postgres connection:
+> [!IMPORTANT]
+> This README is a visual sync derived from Blueturboguy07/cue to give Annsana a polished layout and developer-friendly entry. Replace placeholder images and badges after merging.
 
-```bash
-DJANGO_SETTINGS_MODULE=config.settings.testing python manage.py test
-```
+---
 
-## Setup
+## Quick summary
+
+- Stack: Django · PostgreSQL · HTMX · Tailwind CSS
+- Status: Phase 1 scaffold (feed app in active development)
+- License: Apache-2.0 (recommended) — see LICENSE
+
+---
+
+## What this repo contains
+
+A lightweight Django scaffold intended to bootstrap a social feed + archival wiki for African cultural heritage.
+
+| Component | Purpose |
+|---|---|
+| config/ | Project config (split settings: development / testing / production) |
+| apps/users/ | Custom user model and profile views |
+| apps/feed/ | Posts, multi-image carousels, likes, comments (HTMX) |
+| static/ | Tailwind output + design tokens |
+| templates/ | Base template + app templates |
+
+---
+
+## Install (developer)
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
@@ -48,14 +50,32 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-Settings default to `config.settings.development`. For production, set
-`DJANGO_SETTINGS_MODULE=config.settings.production` and provide a real
-`SECRET_KEY`, `DATABASE_URL`, and `ALLOWED_HOSTS` via environment variables.
+Settings default to `config.settings.development`. For production, set `DJANGO_SETTINGS_MODULE=config.settings.production` and provide a real `SECRET_KEY`, `DATABASE_URL`, and `ALLOWED_HOSTS` via environment variables.
 
-## Tailwind
+---
 
-This scaffold assumes the Tailwind CLI or `django-tailwind` will compile
-`tailwind.config.js` into `static/css/main.css`. Design tokens live in
-`static/css/tokens.css` as CSS custom properties and are referenced from
-`tailwind.config.js` rather than hardcoded, so a future re-theme only
-touches one file.
+## Run tests (no DB connection required)
+
+```bash
+DJANGO_SETTINGS_MODULE=config.settings.testing python manage.py test
+```
+
+---
+
+## Development notes
+
+- The feed app uses a separate `PostImage` model to support multi-image carousels without later schema changes.
+- HTMX drives partial updates for likes/comments to avoid full page reloads.
+- Known gap: login/signup views/templates are not implemented yet; `LoginRequiredMixin` redirects to `/accounts/login/`.
+
+---
+
+## Contributing
+
+See CONTRIBUTING.md for contribution guidelines. Issues and PRs welcome.
+
+---
+
+## License
+
+This repository is licensed under the Apache License, Version 2.0. See the LICENSE file for details.
