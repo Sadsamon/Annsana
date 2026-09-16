@@ -2,13 +2,13 @@
 
 A community-focused platform connecting social expression (a feed) with an archival research knowledge base focused on African cultural heritage.
 
-<img src="docs/tutorial.svg" alt="Annsana placeholder screenshot" width="720" style="max-width:100%;height:auto;" />
+<img src="1.png" title="1" alt="Annsana placeholder screenshot" width="720" style="max-width:100%;height:auto;" />
 
 ---
 
 ## Overview
 
-Annsana is a Django-based scaffold that provides a starting point for building a social feed (multi-image posts, likes, comments) alongside a wiki-style archival repository for curated research materials. This repository contains the project scaffold, development documentation, and contribution guidelines.
+Annsana is a Django-based scaffold that provides a starting point for building a social feed (multi-image posts, likes, comments) alongside a wiki-style archival repository for curated research materi[...]
 
 ---
 
