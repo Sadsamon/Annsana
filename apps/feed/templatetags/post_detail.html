@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.user.username }} on Annsana{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+
+  <a href="{% url 'feed:home' %}" class="text-ink-soft hover:text-ink text-sm">← Back to feed</a>
+
+  <article class="card mt-4">
+
+    {# --- Image --- #}
+    {% if post.image %}
+      <div class="-mx-6 -mt-6 mb-6 overflow-hidden rounded-t-lg">
+        <img
+          src="{{ post.image.url }}"
+          alt="{{ post.caption|truncatechars:80 }}"
+          class="w-full object-cover"
+          style="max-height: 600px;"
+        >
+      </div>
+    {% endif %}
+
+    {# --- Author row --- #}
+    <div class="flex items-center gap-3 mb-4">
+      {% if post.user.userprofile.avatar %}
+        <img
+          src="{{ post.user.userprofile.avatar.url }}"
+          alt="{{ post.user.username }}"
+          class="w-10 h-10 rounded-full object-cover"
+        >
+      {% else %}
+        <div class="w-10 h-10 rounded-full bg-earth-100 flex items-center justify-center
+                    font-display text-base text-earth-700">
+          {{ post.user.username|first|upper }}
+        </div>
+      {% endif %}
+
+      <div>
+        <a href="{% url 'users:profile_detail' username=post.user.username %}"
+           class="font-semibold text-ink hover:text-terracotta">
+          {{ post.user.username }}
+        </a>
+        {% if post.user.userprofile.is_griot %}
+          <span class="ml-1 text-xs bg-sage text-parchment px-2 py-0.5 rounded-full">Griot</span>
+        {% endif %}
+        <p class="text-xs text-ink-soft">{{ post.created_at|date:"j N Y, G:i" }} UTC</p>
+      </div>
+
+      {% if post.category %}
+        <span class="ml-auto bg-earth-100 text-earth-700 text-xs px-3 py-1 rounded-full">
+          {{ post.category.name }}
+        </span>
+      {% endif %}
+    </div>
+
+    {# --- Caption --- #}
+    <p class="text-ink leading-relaxed mb-4 whitespace-pre-wrap">{{ post.caption }}</p>
+
+    {# --- Hashtags --- #}
+    {% with tags=post.hashtags.all %}
+      {% if tags %}
+        <p class="text-sm text-terracotta mb-4">
+          {% for tag in tags %}#{{ tag.name }} {% endfor %}
+        </p>
+      {% endif %}
+    {% endwith %}
+
+    {# --- Geolocation --- #}
+    {% if post.geolocation %}
+      <p class="text-xs text-ink-soft mb-4">📍 {{ post.geolocation }}</p>
+    {% endif %}
+
+    {# --- Archive links (Phase 4: linking app) --- #}
+    <div class="border-t border-earth-100 pt-4 mt-4">
+      <h2 class="font-display text-base text-earth-900 mb-3">Linked Archive Entries</h2>
+      <div id="post-archive-links"
+           hx-get="{% url 'linking:post_links_partial' post_pk=post.pk %}"
+           hx-trigger="load"
+           hx-swap="innerHTML">
+        {# HTMX loads the partial on page load; include it server-side too for
+           non-JS fallback via context set in feed/views.py post_detail. #}
+        {% include 'linking/_post_archive_links.html' with post=post links=archive_links link_form=link_from_post_form %}
+      </div>
+    </div>
+
+    {# --- Owner actions --- #}
+    {% if user == post.user %}
+      <div class="border-t border-earth-100 pt-4 mt-4 flex gap-3">
+        {# Phase 3+ will add edit/delete actions here #}
+        <span class="text-xs text-ink-soft">You are the author of this post.</span>
+      </div>
+    {% endif %}
+
+  </article>
+
+</div>
+{% endblock %}

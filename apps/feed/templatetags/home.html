@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Cultural Feed — Annsana{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto">
+
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="font-display text-2xl text-earth-900">Cultural Feed</h1>
+    {% if user.is_authenticated %}
+      <a href="{% url 'feed:post_create' %}" class="btn-primary text-sm">+ Share</a>
+    {% else %}
+      <a href="{% url 'users:login' %}" class="btn-secondary text-sm">Log in to share</a>
+    {% endif %}
+  </div>
+
+  <div id="post-feed">
+    {% include 'feed/_post_list.html' %}
+  </div>
+
+</div>
+{% endblock %}

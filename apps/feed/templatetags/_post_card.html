@@ -1,0 +1,75 @@
+<article class="card mb-5">
+
+  {# --- Image --- #}
+  {% if post.image %}
+    <a href="{% url 'feed:post_detail' pk=post.pk %}" class="block -mx-6 -mt-6 mb-4 overflow-hidden rounded-t-lg">
+      <img
+        src="{{ post.image.url }}"
+        alt="{{ post.caption|truncatechars:80 }}"
+        class="w-full object-cover"
+        style="max-height: 420px;"
+        loading="lazy"
+      >
+    </a>
+  {% endif %}
+
+  {# --- Author row --- #}
+  <div class="flex items-center gap-2 mb-3">
+    {% if post.user.userprofile.avatar %}
+      <img
+        src="{{ post.user.userprofile.avatar.url }}"
+        alt="{{ post.user.username }}"
+        class="w-8 h-8 rounded-full object-cover flex-shrink-0"
+      >
+    {% else %}
+      <div class="w-8 h-8 rounded-full bg-earth-100 flex items-center justify-center
+                  font-display text-sm text-earth-700 flex-shrink-0">
+        {{ post.user.username|first|upper }}
+      </div>
+    {% endif %}
+
+    <a href="{% url 'users:profile_detail' username=post.user.username %}"
+       class="text-sm font-semibold text-ink hover:text-terracotta">
+      {{ post.user.username }}
+    </a>
+
+    {% if post.user.userprofile.is_griot %}
+      <span class="text-xs bg-sage text-parchment px-2 py-0.5 rounded-full">Griot</span>
+    {% endif %}
+
+    {% if post.category %}
+      <span class="ml-auto text-xs bg-earth-100 text-earth-700 px-2 py-0.5 rounded-full">
+        {{ post.category.name }}
+      </span>
+    {% endif %}
+  </div>
+
+  {# --- Caption --- #}
+  <p class="text-ink text-sm leading-relaxed mb-3">
+    {{ post.caption|truncatechars:280 }}
+  </p>
+
+  {# --- Hashtags --- #}
+  {% with tags=post.hashtags.all %}
+    {% if tags %}
+      <p class="text-sm text-terracotta mb-3">
+        {% for tag in tags %}#{{ tag.name }} {% endfor %}
+      </p>
+    {% endif %}
+  {% endwith %}
+
+  {# --- Footer row --- #}
+  <div class="flex items-center justify-between text-xs text-ink-soft border-t border-earth-100 pt-3">
+    <span>
+      {% if post.geolocation %}
+        <span class="mr-2">📍 {{ post.geolocation }}</span>
+      {% endif %}
+      {{ post.created_at|timesince }} ago
+    </span>
+    <a href="{% url 'feed:post_detail' pk=post.pk %}"
+       class="text-terracotta hover:underline font-medium">
+      Read more →
+    </a>
+  </div>
+
+</article>

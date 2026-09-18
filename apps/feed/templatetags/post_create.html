@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Share — Annsana{% endblock %}
+{% block content %}
+<div class="max-w-xl mx-auto">
+
+  <div class="flex items-center gap-3 mb-6">
+    <a href="{% url 'feed:home' %}" class="text-ink-soft hover:text-ink text-sm">← Feed</a>
+    <h1 class="font-display text-2xl text-earth-900">Share something cultural</h1>
+  </div>
+
+  <div class="card">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form|crispy }}
+      <button type="submit" class="btn-primary w-full mt-4">Publish post</button>
+    </form>
+  </div>
+
+  <p class="text-xs text-ink-soft mt-4 text-center">
+    Images must be JPEG, PNG, or WebP and under {{ MAX_UPLOAD_SIZE_MB|default:"10" }} MB.
+  </p>
+
+</div>
+{% endblock %}
