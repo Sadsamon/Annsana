@@ -1,4 +1,3 @@
-"""WSGI config for Annsana. Used by gunicorn in production."""
 import os
 
 from django.core.wsgi import get_wsgi_application

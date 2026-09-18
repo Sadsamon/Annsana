@@ -1,0 +1,74 @@
+# Annsana — Phase 7 production-ready docker-compose
+# Start: docker compose up -d
+# Migrate: docker compose exec web python manage.py migrate
+# Seed: docker compose exec web python manage.py seed_categories
+
+services:
+
+  # ── PostgreSQL ────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       annsana
+      POSTGRES_USER:     annsana
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "annsana"]
+      interval: 5s
+      retries: 5
+
+  # ── Redis (Celery broker + result backend) ────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+
+  # ── Django web server ─────────────────────────────────────────
+  web:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: annsana.settings.production
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:    { condition: service_healthy }
+      redis: { condition: service_healthy }
+    volumes:
+      - ./staticfiles:/app/staticfiles  # served by Nginx / CDN
+
+  # ── Celery worker (async image processing) ────────────────────
+  celery:
+    build: .
+    restart: unless-stopped
+    command: celery -A annsana worker -l info -Q default -c 2
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: annsana.settings.production
+    depends_on:
+      db:    { condition: service_healthy }
+      redis: { condition: service_healthy }
+
+  # ── Celery beat (periodic tasks — future analytics, cleanup) ──
+  celery-beat:
+    build: .
+    restart: unless-stopped
+    command: celery -A annsana beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    env_file: .env
+    environment:
+      DJANGO_SETTINGS_MODULE: annsana.settings.production
+    depends_on:
+      db:    { condition: service_healthy }
+      redis: { condition: service_healthy }
+
+volumes:
+  postgres_data:
+  redis_data:

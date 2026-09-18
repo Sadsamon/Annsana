@@ -1,4 +1,3 @@
-"""ASGI config for Annsana. Not used at MVP but kept for forward compatibility."""
 import os
 
 from django.core.asgi import get_asgi_application

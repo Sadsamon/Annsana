@@ -1,8 +1,7 @@
 """
-Root URL configuration for Annsana.
+Root URLconf — updated through Phase 3.
 
-Mirrors the routing table in TSD Section 6. Each app owns its own urls.py;
-this file only does top-level dispatch plus dev-mode media serving.
+feed:home (path '') is the application root per TSD §6.
 """
 from django.conf import settings
 from django.conf.urls.static import static
@@ -11,13 +10,11 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('apps.users.urls')),
-
-    # Added as each phase lands:
-    # path('', include('apps.feed.urls')),
-    # path('archive/', include('apps.archive.urls')),
-    # path('links/', include('apps.linking.urls')),
-    # path('trust/', include('apps.trust.urls')),
+    path('', include('apps.feed.urls')),            # feed:home at '/', post URLs
+    path('archive/', include('apps.archive.urls')), # Phase 3
+    path('links/',   include('apps.linking.urls')), # Phase 4
+    path('trust/',   include('apps.trust.urls')),   # Phase 5
+    path('', include('apps.users.urls')),           # /register/, /login/, /profile/…
 ]
 
 if settings.DEBUG:

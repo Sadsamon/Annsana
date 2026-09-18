@@ -1,0 +1,29 @@
+# ── Core ─────────────────────────────────────────────────────────
+Django==5.0.6
+psycopg2-binary==2.9.9      # PostgreSQL driver (production)
+django-environ==0.11.2       # .env file management
+Pillow==10.4.0               # Image processing
+crispy-tailwind==1.0.3 # Forms with Tailwind
+django-crispy-forms==2.3
+django-htmx==1.19.0          # HTMX request detection
+
+# ── Phase 7: REST API ────────────────────────────────────────────
+djangorestframework==3.15.2  # DRF
+djangorestframework-simplejwt==5.3.1  # JWT auth for the API
+
+# ── Phase 7: Async task queue ────────────────────────────────────
+celery==5.4.0                # Task queue
+redis==5.0.8                 # Celery broker + result backend
+django-celery-results==2.5.1 # Store task results in Django ORM
+django-celery-beat==2.6.0   # Periodic tasks
+
+# ── Phase 7: S3 media storage ────────────────────────────────────
+django-storages[s3]==1.14.4  # S3 backend via boto3
+boto3==1.35.0                # AWS SDK
+
+# ── Phase 7: Security ────────────────────────────────────────────
+django-ratelimit==4.1.0      # Rate limiting on sensitive endpoints
+
+# ── Development only ─────────────────────────────────────────────
+# (excluded from the production Docker image via pip install --no-dev)
+coverage==7.6.1
