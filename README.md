@@ -1,86 +1,58 @@
-# Annsana
+# Annsana — Phase 1 (Foundation)
 
-A community-focused platform connecting social expression (a feed) with an archival research knowledge base focused on African cultural heritage.
+Per TSD v1.1 §16 / v2.0 §16, Phase 1 delivers: Django project scaffold,
+settings, DB config, the `users` app, auth views, and base templates.
+No DRF/JWT/Celery/Docker yet — that's Phase 7.
 
-<img src="1.png" title="1" alt="Annsana placeholder screenshot" width="720" style="max-width:100%;height:auto;" />
-
----
-
-## Overview
-
-Annsana is a Django-based scaffold that provides a starting point for building a social feed (multi-image posts, likes, comments) alongside a wiki-style archival repository for curated research materi[...]
-
----
-
-## Quick facts
-
-- Stack: Django · PostgreSQL · HTMX · Tailwind CSS
-- Status: Phase 1 scaffold (feed app under active development)
-- License: Apache-2.0 (see LICENSE)
-
----
-
-## Contents
-
-- config/ — project configuration (split settings: development / testing / production)
-- apps/ — application packages (users, feed, etc.)
-- static/ — compiled frontend assets and design tokens
-- templates/ — Django templates
-- docs/ — documentation assets and screenshots
-
----
-
-## Getting started (development)
-
-1. Create a virtual environment and activate it:
+## Setup
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-```
-
-2. Install dependencies and prepare environment:
-
-```bash
-pip install --upgrade pip
+python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env      # edit SECRET_KEY, DATABASE_URL, ALLOWED_HOSTS
-```
 
-3. Run migrations and start the development server:
+cp .env.example .env
+# Edit .env: set SECRET_KEY and DATABASE_URL (Postgres 16, per TSD §3)
 
-```bash
+npm install
+npm run build:css        # compiles static/css/output.css from Tailwind tokens
+
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
 ```
 
-Use `config.settings.development` for local development and `config.settings.production` for production deployments.
+## What's here
 
----
+- `annsana/` — Django project package (`settings/base.py` +
+  `development.py` / `production.py`, root `urls.py`, `wsgi.py`/`asgi.py`)
+- `apps/users/` — `UserProfile` model (BIGSERIAL PK, OneToOne on
+  `auth.User`), register/login/logout/profile_detail/profile_edit views,
+  Griot flag manageable from Django admin
+- `templates/` — `base.html` (nav, Tailwind, HTMX script tag) and a
+  placeholder `core/home.html` standing in for `/` until `feed:home`
+  exists (Phase 2)
+- `tailwind.config.js` / `static/css/input.css` — the "Digital Museum"
+  design tokens from TSD §9.1
 
-## Testing
+## Verified working (manual test pass, this session)
 
-Local unit tests can be run against the testing settings:
+- `manage.py check` — clean
+- `makemigrations` produces `BigAutoField` PKs as the schema requires
+- Full flow exercised against a throwaway SQLite DB: register → auto-created
+  `UserProfile` → profile page renders → logout → login → edit profile
+  (bio/location persist) → anonymous user redirected away from
+  `/profile/edit/` → duplicate username rejected without a 500 → admin
+  reachable
 
-```bash
-DJANGO_SETTINGS_MODULE=config.settings.testing python -m pytest -q
-```
+## Known follow-ups for later phases (not bugs, just sequencing)
 
----
-
-## Contributing
-
-See CONTRIBUTING.md for contribution guidelines and the project's Code of Conduct. Small fixes, documentation improvements, and issues are welcome.
-
----
-
-## Images & branding
-
-The `docs/` directory contains placeholder images. Replace these with project screenshots before publishing the repository or enabling GitHub Pages.
-
----
-
-## License
-
-This repository is licensed under the Apache License, Version 2.0. See the LICENSE file for details.
+- `UserProfile.recalculate_reputation()` is a stub — wired to real logic
+  in Phase 5 once `apps.trust.models.Vote` exists.
+- `/` is a placeholder until `apps.feed` lands in Phase 2 — swap the
+  `TemplateView` in `annsana/urls.py` for `feed:home` then, and update
+  `LOGIN_REDIRECT_URL` / the nav link if you want it to land somewhere
+  more specific than the feed root.
+- HTMX is loaded from a CDN (`unpkg.com`) in `base.html` for Phase 1 dev
+  convenience. TSD §14 specifies a vendored `static/js/htmx.min.js` —
+  swap that in before shipping (cdnjs/unpkg aren't reachable from this
+  build sandbox, so it couldn't be vendored here).

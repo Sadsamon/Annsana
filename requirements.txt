@@ -1,6 +1,12 @@
-Django==6.0.6
-psycopg2-binary>=2.9
-django-environ>=0.11
-django-htmx>=1.17
-django-browser-reload>=1.12
-Pillow>=10.0
+# --- Phase 1 (Foundation) dependencies ---
+# Async/API/Celery deps (DRF, SimpleJWT, Celery, Redis, boto3, etc.) are
+# deliberately NOT listed here yet -- they belong to Phase 7 per TSD v2.0 §16.
+
+Django==5.0.6
+psycopg2-binary==2.9.9
+django-environ==0.11.2
+django-crispy-forms==2.1
+crispy-tailwind==1.0.3
+django-htmx==1.18.0
+Pillow==10.4.0
+gunicorn==22.0.0
