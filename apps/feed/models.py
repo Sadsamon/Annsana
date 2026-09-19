@@ -3,6 +3,7 @@ import uuid
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from .validators import validate_uploaded_image
 
 
 class PostQuerySet(models.QuerySet):
@@ -53,23 +54,28 @@ class Post(models.Model):
 
 class PostImage(models.Model):
     """
-    One image within a post's carousel. Modeled as its own table from
-    Phase 2 onward so multi-image posts don't require a later migration.
+    One image within a post's carousel.
     """
 
-from .validators import validate_uploaded_image    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="images")
-image = models.ImageField(
-    _("image"),
-    upload_to=post_image_upload_path,
-    validators=[validate_uploaded_image],
-)
-class Meta:
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name="images",
+    )
+    image = models.ImageField(
+        _("image"),
+        upload_to=post_image_upload_path,
+        validators=[validate_uploaded_image],
+    )
+    alt_text = models.CharField(_("alt text"), max_length=255, blank=True)
+    position = models.PositiveSmallIntegerField(_("position"), default=0)
+
+    class Meta:
         ordering = ["position"]
 
     def __str__(self):
         return f"Image {self.position} for post {self.post_id}"
-
-
 class Like(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="likes")
