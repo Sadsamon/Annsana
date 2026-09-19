@@ -3,7 +3,7 @@ import uuid
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
+from apps.feed.validators import validate_uploaded_image
 from .managers import UserManager
 
 
@@ -20,7 +20,11 @@ class User(AbstractUser):
     display_name = models.CharField(_("display name"), max_length=80, blank=True)
     bio = models.TextField(_("bio"), max_length=500, blank=True)
     avatar = models.ImageField(
-        _("avatar"), upload_to="avatars/%Y/%m/", blank=True, null=True
+        _("avatar"),
+        upload_to="avatars/%Y/%m/",
+        blank=True,
+        null=True,
+        validators=[validate_uploaded_image],
     )
     location = models.CharField(_("location"), max_length=120, blank=True)
     cultural_affiliation = models.CharField(
