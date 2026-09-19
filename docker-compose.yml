@@ -36,7 +36,7 @@ services:
     restart: unless-stopped
     env_file: .env
     environment:
-      DJANGO_SETTINGS_MODULE: annsana.settings.production
+      DJANGO_SETTINGS_MODULE: config.settings.production
     ports:
       - "8000:8000"
     depends_on:
@@ -49,7 +49,7 @@ services:
   celery:
     build: .
     restart: unless-stopped
-    command: celery -A annsana worker -l info -Q default -c 2
+    command: celery -A config worker -l info -Q default -c 2
     env_file: .env
     environment:
       DJANGO_SETTINGS_MODULE: annsana.settings.production
@@ -61,8 +61,7 @@ services:
   celery-beat:
     build: .
     restart: unless-stopped
-    command: celery -A annsana beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
-    env_file: .env
+    command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler    env_file: .env
     environment:
       DJANGO_SETTINGS_MODULE: annsana.settings.production
     depends_on:
