@@ -52,7 +52,7 @@ services:
     command: celery -A config worker -l info -Q default -c 2
     env_file: .env
     environment:
-      DJANGO_SETTINGS_MODULE: annsana.settings.production
+      DJANGO_SETTINGS_MODULE: config.settings.production
     depends_on:
       db:    { condition: service_healthy }
       redis: { condition: service_healthy }
@@ -61,9 +61,11 @@ services:
   celery-beat:
     build: .
     restart: unless-stopped
-    command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler    env_file: .env
+    command: celery -A config beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    env_file: .env
     environment:
-      DJANGO_SETTINGS_MODULE: annsana.settings.production
+    
+      DJANGO_SETTINGS_MODULE: config.settings.production
     depends_on:
       db:    { condition: service_healthy }
       redis: { condition: service_healthy }
