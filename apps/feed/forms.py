@@ -1,6 +1,7 @@
 from django import forms
 
 from .models import Comment, Post
+from .validators import validate_uploaded_image
 
 
 class MultipleFileInput(forms.ClearableFileInput):
@@ -12,6 +13,7 @@ class MultipleFileField(forms.FileField):
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("widget", MultipleFileInput())
+        kwargs.setdefault("validators", [validate_uploaded_image])
         super().__init__(*args, **kwargs)
 
     def clean(self, data, initial=None):

@@ -1,8 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
-from .models import UserProfile
+User = get_user_model()
 
 
 class RegistrationForm(UserCreationForm):
@@ -29,10 +29,10 @@ class RegistrationForm(UserCreationForm):
 
 
 class ProfileEditForm(forms.ModelForm):
-    """Lets a user edit their own bio, avatar, and location."""
+    """Lets a user edit their own profile fields."""
 
     class Meta:
-        model = UserProfile
+        model = User
         fields = ['bio', 'avatar', 'location']
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Tell your story...'}),

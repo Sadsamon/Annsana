@@ -11,3 +11,4 @@ django-htmx==1.19.0          # HTMX request detection
 # ── Development only ─────────────────────────────────────────────
 # (excluded from the production Docker image via pip install --no-dev)
 coverage==7.6.1
+django-browser-reload==1.21.0
