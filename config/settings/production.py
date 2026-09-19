@@ -9,6 +9,30 @@ DEBUG = False
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
 DATABASES = {"default": env.db("DATABASE_URL")}
+
+STORAGES = {
+	"default": {
+		"BACKEND": "django.core.files.storage.FileSystemStorage",
+	},
+	"staticfiles": {
+		"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+	},
+}
+
+if env("AWS_STORAGE_BUCKET_NAME", default=""):
+	STORAGES["default"] = {
+		"BACKEND": "storages.backends.s3.S3Storage",
+		"OPTIONS": {
+			"access_key": env("AWS_ACCESS_KEY_ID"),
+			"secret_key": env("AWS_SECRET_ACCESS_KEY"),
+			"bucket_name": env("AWS_STORAGE_BUCKET_NAME"),
+			"endpoint_url": env("AWS_S3_ENDPOINT_URL"),
+			"region_name": env("AWS_S3_REGION_NAME", default="auto"),
+			"default_acl": None,
+			"file_overwrite": False,
+			"signature_version": "s3v4",
+		},
+	}
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
