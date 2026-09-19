@@ -28,8 +28,7 @@ COPY --from=build /usr/local/bin /usr/local/bin
 COPY . .
 
 # Collect static files (media goes to S3 in production)
-RUN python manage.py collectstatic --noinput --settings=annsana.settings.production 2>/dev/null || true
-
+RUN python manage.py collectstatic --noinput --settings=config.settings.production
 # Non-root user for security
 RUN adduser --disabled-password --gecos '' annsana \
  && chown -R annsana:annsana /app
@@ -38,7 +37,7 @@ USER annsana
 EXPOSE 8000
 
 # Gunicorn: 1 worker per CPU + 1, non-blocking I/O via gevent
-CMD ["gunicorn", "annsana.wsgi:application", \
+CMD ["gunicorn", "config.wsgi:application", \
      "--bind", "0.0.0.0:8000", \
      "--workers", "3", \
      "--timeout", "60", \
