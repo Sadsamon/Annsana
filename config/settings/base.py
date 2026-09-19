@@ -78,3 +78,4 @@ MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+MAX_UPLOAD_SIZE_BYTES = 10 * 1024 * 1024
