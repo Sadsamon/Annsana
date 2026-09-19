@@ -22,8 +22,11 @@ python manage.py runserver
 ```
 
 - `config/` — Django project package (`settings/base.py`,
-  `development.py` / `production.py`, root `urls.py`, `wsgi.py` / `asgi.py`)- `apps/users/` — `UserProfile` model (BIGSERIAL PK, OneToOne on
-  `auth.User`), register/login/logout/profile_detail/profile_edit views,
+  `development.py` / `production.py`, root `urls.py`, `wsgi.py` / `asgi.py`)
+- `apps/users/` — authentication, profiles, and user-account logic
+- `apps/feed/` — posts, images, likes, comments, and feed rendering
+- `templates/` — HTML templates
+- `static/` — frontend assets
   Griot flag manageable from Django admin
 - `templates/` — `base.html` (nav, Tailwind, HTMX script tag) and a
   placeholder `core/home.html` standing in for `/` until `feed:home`
@@ -46,7 +49,7 @@ python manage.py runserver
 - `UserProfile.recalculate_reputation()` is a stub — wired to real logic
   in Phase 5 once `apps.trust.models.Vote` exists.
 - `/` is a placeholder until `apps.feed` lands in Phase 2 — swap the
-  `TemplateView` in `annsana/urls.py` for `feed:home` then, and update
+  `TemplateView` in `config/urls.py` for `feed:home` then, and update
   `LOGIN_REDIRECT_URL` / the nav link if you want it to land somewhere
   more specific than the feed root.
 - HTMX is loaded from a CDN (`unpkg.com`) in `base.html` for Phase 1 dev
