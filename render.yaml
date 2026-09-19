@@ -1,0 +1,44 @@
+# render.yaml — Render deployment spec
+# Commit this file. Render reads it automatically.
+# Docs: https://render.com/docs/render-yaml-spec
+
+services:
+  - type: web
+    name: annsana
+    runtime: python
+    region: oregon          # or frankfurt for Europe
+    plan: free
+    branch: main
+
+    buildCommand: |
+      pip install -r requirements.txt &&
+      python manage.py collectstatic --noinput
+
+    startCommand: >
+      gunicorn annsana.wsgi:application
+      --bind 0.0.0.0:$PORT
+      --workers 2
+      --timeout 60
+      --access-logfile -
+
+    healthCheckPath: /
+
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: annsana.settings.production
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: SECRET_KEY
+        generateValue: true          # Render generates this for you
+      - key: CELERY_ALWAYS_EAGER
+        value: "True"               # no Redis on free tier — sync mode
+      - key: DEBUG
+        value: "False"
+      # Fill these in Render's dashboard after connecting your repo:
+      # DATABASE_URL        ← paste from Neon
+      # ALLOWED_HOSTS       ← your-app-name.onrender.com
+      # AWS_ACCESS_KEY_ID   ← from Cloudflare R2
+      # AWS_SECRET_ACCESS_KEY
+      # AWS_STORAGE_BUCKET_NAME
+      # AWS_S3_ENDPOINT_URL ← https://<id>.r2.cloudflarestorage.com
+      # AWS_S3_REGION_NAME  ← auto
