@@ -2,7 +2,7 @@
 
 Per TSD v1.1 §16 / v2.0 §16, Phase 1 delivers: Django project scaffold,
 settings, DB config, the `users` app, auth views, and base templates.
-No DRF/JWT/Celery/Docker yet — that's Phase 7.
+The repository contains the active Django foundation and deployment scaffolding. Optional platform infrastructure should be treated as separate, intentionally implemented features rather than assumed defaults.
 
 ## Setup
 
@@ -21,11 +21,8 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-## What's here
-
-- `annsana/` — Django project package (`settings/base.py` +
-  `development.py` / `production.py`, root `urls.py`, `wsgi.py`/`asgi.py`)
-- `apps/users/` — `UserProfile` model (BIGSERIAL PK, OneToOne on
+- `config/` — Django project package (`settings/base.py`,
+  `development.py` / `production.py`, root `urls.py`, `wsgi.py` / `asgi.py`)- `apps/users/` — `UserProfile` model (BIGSERIAL PK, OneToOne on
   `auth.User`), register/login/logout/profile_detail/profile_edit views,
   Griot flag manageable from Django admin
 - `templates/` — `base.html` (nav, Tailwind, HTMX script tag) and a
