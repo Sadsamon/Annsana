@@ -57,13 +57,13 @@ class PostImage(models.Model):
     Phase 2 onward so multi-image posts don't require a later migration.
     """
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="images")
-    image = models.ImageField(_("image"), upload_to=post_image_upload_path)
-    alt_text = models.CharField(_("alt text"), max_length=255, blank=True)
-    position = models.PositiveSmallIntegerField(_("position"), default=0)
-
-    class Meta:
+from .validators import validate_uploaded_image    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="images")
+image = models.ImageField(
+    _("image"),
+    upload_to=post_image_upload_path,
+    validators=[validate_uploaded_image],
+)
+class Meta:
         ordering = ["position"]
 
     def __str__(self):
